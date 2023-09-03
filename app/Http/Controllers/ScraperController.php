@@ -31,7 +31,7 @@ class ScraperController extends Controller
     {
         $scrape = Scrape::where('url', $url)->where('depth', $depth)->count();
         $stored_flag = true;
-        // print_r('fdgdgdf'); die;
+        
         if (is_null($scrape) === true || $scrape === 0) {
 
             $scraped_data = $this->scrapeUrl($url, $depth);
