@@ -179,7 +179,6 @@ return [
 
         Jenssegers\Mongodb\MongodbServiceProvider::class,
 
-        Weidner\Goutte\GoutteServiceProvider::class,
     ],
 
     /*
