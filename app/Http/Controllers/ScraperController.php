@@ -74,7 +74,7 @@ class ScraperController extends Controller
         $temp_arr = [$url];
         $sub_urls = [];
         $final_results = [];
-        // $previous_results = [];
+        $previous_results = [];
 
         for ($i = 1; $i <= $depth; $i++) {
             if ($i > 1) {
@@ -88,7 +88,7 @@ class ScraperController extends Controller
                 $dom_crawler = new Crawler($website);
 
                 $host = isset($parsed_url['host']) === true ? $parsed_url['host'] : $parsed_url['path'];
-                // $previous_results = $sub_urls;
+                $previous_results = $sub_urls;
                 $sub_urls = $dom_crawler->filter('a')->each(function (Crawler $node) use ($host) {
                     $temp_single_url = $node->attr('href');
 
@@ -100,7 +100,7 @@ class ScraperController extends Controller
             // preventing duplicates in current results
             $sub_urls = array_unique($sub_urls);
             // preventing duplicates within preivous and current results
-            // $sub_urls = array_diff($sub_urls, $previous_results);
+            $sub_urls = array_diff($sub_urls, $previous_results);
             array_push($final_results, ['depth' => $i, 'data' => $sub_urls]);
         }
 
@@ -136,9 +136,11 @@ class ScraperController extends Controller
 
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_exec($ch);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 180);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
         $retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-
+        
         return $retcode >= 400 && $retcode != 999 ? false : true;
     }
 
